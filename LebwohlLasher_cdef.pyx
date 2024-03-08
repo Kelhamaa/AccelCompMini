@@ -2,7 +2,7 @@ import sys
 import time
 import datetime
 cimport numpy as np
-import  numpy as np
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
@@ -14,18 +14,18 @@ def initdat(int nmax):
     Description:
       Function to create and initialise the main data array that holds
       the lattice.  Will return a square lattice (size nmax x nmax)
-	  initialised with random orientations in the range [0,2pi].
-	Returns:
-	  arr (float(nmax,nmax)) = array to hold lattice.
+      initialised with random orientations in the range [0,2pi].
+    Returns:
+      arr (float(nmax,nmax)) = array to hold lattice.
     """
-    cdef np.ndarray[np.float64_t, ndim=2] arr = np.random.random((nmax,nmax)) * 2.0 * np.pi
+    cdef double[:, ::1] arr = np.random.random((nmax, nmax)) * 2.0 * np.pi
     return arr
 #=======================================================================
-def plotdat(arr, int pflag, int nmax):
+def plotdat(double[:, ::1] arr, int pflag, int nmax):
     """
     Arguments:
-	  arr (float(nmax,nmax)) = array that contains lattice data;
-	  pflag (int) = parameter to control plotting;
+      arr (float(nmax,nmax)) = array that contains lattice data;
+      pflag (int) = parameter to control plotting;
       nmax (int) = side length of square lattice.
     Description:
       Function to make a pretty plot of the data array.  Makes use of the
@@ -34,15 +34,15 @@ def plotdat(arr, int pflag, int nmax):
         pflag = 1 for energy plot;
         pflag = 2 for angles plot;
         pflag = 3 for black plot.
-	  The angles plot uses a cyclic color map representing the range from
-	  0 to pi.  The energy plot is normalised to the energy range of the
-	  current frame.
-	Returns:
+      The angles plot uses a cyclic color map representing the range from
+      0 to pi.  The energy plot is normalised to the energy range of the
+      current frame.
+    Returns:
       NULL
     """
     cdef int i, j
-    cdef u, v, cols
-    cdef x, y
+    cdef double[:, ::1] u, v, cols
+    cdef double[::1] x, y
     
     if pflag==0:
         return
@@ -50,7 +50,7 @@ def plotdat(arr, int pflag, int nmax):
     v = np.sin(arr)
     x = np.arange(nmax)
     y = np.arange(nmax)
-    cols = np.zeros((nmax,nmax))
+    cols = np.zeros((nmax, nmax))
     if pflag==1: # colour the arrows according to energy
         mpl.rc('image', cmap='rainbow')
         cols = np.fromfunction(lambda i, j: one_energy(arr, i, j, nmax), (nmax, nmax))
@@ -70,23 +70,23 @@ def plotdat(arr, int pflag, int nmax):
     ax.set_aspect('equal')
     plt.show()
 #=======================================================================
-def savedat(arr,int nsteps,float Ts,float runtime,ratio,energy,order,int nmax):
+def savedat(double[:, ::1] arr, int nsteps, float Ts, float runtime, ratio, energy, order, int nmax):
     """
     Arguments:
-	  arr (float(nmax,nmax)) = array that contains lattice data;
-	  nsteps (int) = number of Monte Carlo steps (MCS) performed;
-	  Ts (float) = reduced temperature (range 0 to 2);
-	  ratio (float(nsteps)) = array of acceptance ratios per MCS;
-	  energy (float(nsteps)) = array of reduced energies per MCS;
-	  order (float(nsteps)) = array of order parameters per MCS;
+      arr (float(nmax,nmax)) = array that contains lattice data;
+      nsteps (int) = number of Monte Carlo steps (MCS) performed;
+      Ts (float) = reduced temperature (range 0 to 2);
+      ratio (float(nsteps)) = array of acceptance ratios per MCS;
+      energy (float(nsteps)) = array of reduced energies per MCS;
+      order (float(nsteps)) = array of order parameters per MCS;
       nmax (int) = side length of square lattice to simulated.
     Description:
       Function to save the energy, order, and acceptance ratio
       per Monte Carlo step to a text file.  Also saves run data in the
       header.  Filenames are generated automatically based on
       date and time at the beginning of execution.
-	Returns:
-	  NULL
+    Returns:
+      NULL
     """
     cdef str current_datetime, filename
     cdef int i
@@ -108,20 +108,20 @@ def savedat(arr,int nsteps,float Ts,float runtime,ratio,energy,order,int nmax):
         for i in range(nsteps+1):
             print("   {:05d}    {:6.4f} {:12.4f}  {:6.4f} ".format(i,ratio[i],energy[i],order[i]),file=FileOut)
 #=======================================================================
-def one_energy(arr,int ix,int iy,int nmax):
+def one_energy(double[:, ::1] arr, int ix, int iy, int nmax):
     """
     Arguments:
-	  arr (float(nmax,nmax)) = array that contains lattice data;
-	  ix (int) = x lattice coordinate of cell;
-	  iy (int) = y lattice coordinate of cell;
+      arr (float(nmax,nmax)) = array that contains lattice data;
+      ix (int) = x lattice coordinate of cell;
+      iy (int) = y lattice coordinate of cell;
       nmax (int) = side length of square lattice.
     Description:
       Function that computes the energy of a single cell of the
       lattice taking into account periodic boundaries.  Working with
       reduced energy (U/epsilon), equivalent to setting epsilon=1 in
       equation (1) in the project notes.
-	Returns:
-	  en (float) = reduced energy of cell.
+    Returns:
+      en (float) = reduced energy of cell.
     """
     cdef int ixp, ixm, iyp, iym
     cdef double ang, en = 0.0
@@ -143,16 +143,16 @@ def one_energy(arr,int ix,int iy,int nmax):
     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
     return en
 #=======================================================================
-def all_energy(arr,int nmax):
+def all_energy(double[:, ::1] arr, int nmax):
     """
     Arguments:
-	  arr (float(nmax,nmax)) = array that contains lattice data;
+      arr (float(nmax,nmax)) = array that contains lattice data;
       nmax (int) = side length of square lattice.
     Description:
       Function to compute the energy of the entire lattice. Output
       is in reduced units (U/epsilon).
-	Returns:
-	  enall (float) = reduced energy of lattice.
+    Returns:
+      enall (float) = reduced energy of lattice.
     """
     cdef double enall = 0.0
     cdef int i, j
@@ -161,17 +161,17 @@ def all_energy(arr,int nmax):
             enall += one_energy(arr, i, j, nmax)
     return enall
 #=======================================================================
-def get_order(arr,int nmax):
+def get_order(double[:, ::1] arr, int nmax):
     """
     Arguments:
-	  arr (float(nmax,nmax)) = array that contains lattice data;
+      arr (float(nmax,nmax)) = array that contains lattice data;
       nmax (int) = side length of square lattice.
     Description:
       Function to calculate the order parameter of a lattice
       using the Q tensor approach, as in equation (3) of the
       project notes.  Function returns S_lattice = max(eigenvalues(Q_ab)).
-	Returns:
-	  max(eigenvalues(Qab)) (float) = order parameter for lattice.
+    Returns:
+      max(eigenvalues(Qab)) (float) = order parameter for lattice.
     """
     cdef lab
     cdef Qab
@@ -183,11 +183,11 @@ def get_order(arr,int nmax):
     eigenvalues = np.linalg.eigvals(Qab)
     return eigenvalues.max()
 #=======================================================================
-def MC_step(arr,float Ts,int nmax):
+def MC_step(double[:, ::1] arr, float Ts, int nmax):
     """
     Arguments:
-	  arr (float(nmax,nmax)) = array that contains lattice data;
-	  Ts (float) = reduced temperature (range 0 to 2);
+      arr (float(nmax,nmax)) = array that contains lattice data;
+      Ts (float) = reduced temperature (range 0 to 2);
       nmax (int) = side length of square lattice.
     Description:
       Function to perform one MC step, which consists of an average
@@ -196,15 +196,15 @@ def MC_step(arr,float Ts,int nmax):
       ratio for information.  This is the fraction of attempted changes
       that are successful.  Generally aim to keep this around 0.5 for
       efficient simulation.
-	Returns:
-	  accept/(nmax**2) (float) = acceptance ratio for current MCS.
+    Returns:
+      accept/(nmax**2) (float) = acceptance ratio for current MCS.
     """
-    cdef accept = 0
+    cdef double accept = 0
     cdef int i, j, ix, iy
     cdef xran, yran, aran
     cdef double ang, en0, en1, boltz
     
-    cdef scale = 0.1 + Ts
+    cdef double scale = 0.1 + Ts
     xran = np.random.randint(0, high=nmax, size=(nmax, nmax))
     yran = np.random.randint(0, high=nmax, size=(nmax, nmax))
     aran = np.random.normal(scale=scale, size=(nmax, nmax))
@@ -225,11 +225,11 @@ def MC_step(arr,float Ts,int nmax):
 def main(str program, int nsteps, int nmax, float temp, int pflag):
     """
     Arguments:
-	  program (string) = the name of the program;
-	  nsteps (int) = number of Monte Carlo steps (MCS) to perform;
+      program (string) = the name of the program;
+      nsteps (int) = number of Monte Carlo steps (MCS) to perform;
       nmax (int) = side length of square lattice to simulate;
-	  temp (float) = reduced temperature (range 0 to 2);
-	  pflag (int) = a flag to control plotting.
+      temp (float) = reduced temperature (range 0 to 2);
+      pflag (int) = a flag to control plotting.
     Description:
       This is the main function running the Lebwohl-Lasher simulation.
     Returns:
