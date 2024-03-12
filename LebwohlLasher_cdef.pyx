@@ -48,8 +48,8 @@ def plotdat(double[:, ::1] arr, int pflag, int nmax):
         return
     u = np.cos(arr)
     v = np.sin(arr)
-    x = np.arange(nmax)
-    y = np.arange(nmax)
+    x = np.arange(float(nmax))
+    y = np.arange(float(nmax))
     cols = np.zeros((nmax, nmax))
     if pflag==1: # colour the arrows according to energy
         mpl.rc('image', cmap='rainbow')
@@ -57,7 +57,7 @@ def plotdat(double[:, ::1] arr, int pflag, int nmax):
         norm = plt.Normalize(cols.min(), cols.max())
     elif pflag==2: # colour the arrows according to angle
         mpl.rc('image', cmap='hsv')
-        cols = arr % np.pi
+        cols = np.array(arr) % np.pi
         norm = plt.Normalize(vmin=0, vmax=np.pi)
     else:
         mpl.rc('image', cmap='gist_gray')

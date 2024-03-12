@@ -2,18 +2,20 @@ import sys
 import LebwohlLasher_cdef
 
 def main():
-    # Set your program name
-    program = "LebwohlLasher"
-    # Set the number of Monte Carlo steps
-    nsteps = 50
-    # Set the side length of the lattice
-    nmax = 50
-    # Set the reduced temperature
-    temp = 0.5
-    # Set the plot flag
-    pflag = 0
+    if len(sys.argv) != 5:
+        print("Usage: python3 run.py <nmax> <nsteps> <temp> <pflag>")
+        sys.exit(1)
 
-    # Call the main function from your Cython module
+    try:
+        nsteps = int(sys.argv[1])
+        nmax = int(sys.argv[2])
+        temp = float(sys.argv[3])
+        pflag = int(sys.argv[4])
+    except ValueError:
+        print("Invalid input. Please provide integers for nmax and nsteps, and a float for temp.")
+        sys.exit(1)
+
+    program = "LebwohlLasher"
     LebwohlLasher_cdef.main(program, nsteps, nmax, temp, pflag)
 
 if __name__ == "__main__":

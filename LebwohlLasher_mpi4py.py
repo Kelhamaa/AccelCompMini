@@ -168,22 +168,28 @@ def one_energy(arr,ix,iy,nmax):
     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
     return en
 #=======================================================================
-def all_energy(arr,nmax):
+def all_energy(arr, nmax):
     """
     Arguments:
-	  arr (float(nmax,nmax)) = array that contains lattice data;
+      arr (float(nmax,nmax)) = array that contains lattice data;
       nmax (int) = side length of square lattice.
     Description:
       Function to compute the energy of the entire lattice. Output
       is in reduced units (U/epsilon).
-	Returns:
-	  enall (float) = reduced energy of lattice.
+    Returns:
+      enall (float) = reduced energy of lattice.
     """
-    enall = 0.0
-    for i in range(nmax):
+    enall_local = 0.0
+    for i in range(rank, nmax, size):  # Distribute workload among processes
         for j in range(nmax):
-            enall += one_energy(arr,i,j,nmax)
-    return enall
+            enall_local += one_energy(arr, i, j, nmax)
+
+    # Using MPI to collect results from each process
+    local_energy = np.array(enall_local, dtype=np.float64)
+    global_energy = np.zeros(1, dtype=np.float64)
+    comm.Allreduce(local_energy, global_energy, op=MPI.SUM)
+
+    return global_energy[0]
 #=======================================================================
 def get_order(arr,nmax):
     """
@@ -213,11 +219,11 @@ def get_order(arr,nmax):
     eigenvalues,eigenvectors = np.linalg.eig(Qab)
     return eigenvalues.max()
 #=======================================================================
-def MC_step(arr,Ts,nmax):
+def MC_step(arr, Ts, nmax):
     """
     Arguments:
-	  arr (float(nmax,nmax)) = array that contains lattice data;
-	  Ts (float) = reduced temperature (range 0 to 2);
+      arr (float(nmax,nmax)) = array that contains lattice data;
+      Ts (float) = reduced temperature (range 0 to 2);
       nmax (int) = side length of square lattice.
     Description:
       Function to perform one MC step, which consists of an average
@@ -226,39 +232,43 @@ def MC_step(arr,Ts,nmax):
       ratio for information.  This is the fraction of attempted changes
       that are successful.  Generally aim to keep this around 0.5 for
       efficient simulation.
-	Returns:
-	  accept/(nmax**2) (float) = acceptance ratio for current MCS.
+    Returns:
+      accept/(nmax**2) (float) = acceptance ratio for current MCS.
     """
-    #
     # Pre-compute some random numbers.  This is faster than
     # using lots of individual calls.  "scale" sets the width
     # of the distribution for the angle changes - increases
     # with temperature.
-    scale=0.1+Ts
+    scale = 0.1 + Ts
     accept = 0
-    xran = np.random.randint(0,high=nmax, size=(nmax,nmax))
-    yran = np.random.randint(0,high=nmax, size=(nmax,nmax))
-    aran = np.random.normal(scale=scale, size=(nmax,nmax))
-    for i in range(nmax):
-        for j in range(nmax):
-            ix = xran[i,j]
-            iy = yran[i,j]
-            ang = aran[i,j]
-            en0 = one_energy(arr,ix,iy,nmax)
-            arr[ix,iy] += ang
-            en1 = one_energy(arr,ix,iy,nmax)
-            if en1<=en0:
-                accept += 1
-            else:
-            # Now apply the Monte Carlo test - compare
-            # exp( -(E_new - E_old) / T* ) >= rand(0,1)
-                boltz = np.exp( -(en1 - en0) / Ts )
 
-                if boltz >= np.random.uniform(0.0,1.0):
-                    accept += 1
+    # Distribute workload among processes
+    local_accept = 0
+    for i in range(rank, nmax, size):
+        for j in range(nmax):
+            ix = i
+            iy = j
+            ang = np.random.normal(scale=scale)
+            en0 = one_energy(arr, ix, iy, nmax)
+            arr[ix, iy] += ang
+            en1 = one_energy(arr, ix, iy, nmax)
+            if en1 <= en0:
+                local_accept += 1
+            else:
+                # Now apply the Monte Carlo test - compare
+                # exp( -(E_new - E_old) / T* ) >= rand(0,1)
+                boltz = np.exp(-(en1 - en0) / Ts)
+                if boltz >= np.random.uniform(0.0, 1.0):
+                    local_accept += 1
                 else:
-                    arr[ix,iy] -= ang
-    return accept/(nmax*nmax)
+                    arr[ix, iy] -= ang
+
+    # Using MPI to collect results from each process
+    local_acceptance = np.array(local_accept, dtype=np.float64)
+    global_acceptance = np.zeros(1, dtype=np.float64)
+    comm.Allreduce(local_acceptance, global_acceptance, op=MPI.SUM)
+
+    return global_acceptance[0] / (nmax ** 2)
 #=======================================================================
 def main(program, nsteps, nmax, temp, pflag):
     """
@@ -273,42 +283,50 @@ def main(program, nsteps, nmax, temp, pflag):
     Returns:
       NULL
     """
-    # MPI Integration: Divide the workload among MPI processes
+    # Split the total number of steps among processes
     local_nsteps = nsteps // size
-    if rank < nsteps % size:
-        local_nsteps += 1
 
+    # Calculate starting and ending iteration for each process
+    start_iter = rank * local_nsteps
+    end_iter = (rank + 1) * local_nsteps if rank < size - 1 else nsteps
     # Create and initialise lattice
     lattice = initdat(nmax)
     # Plot initial frame of lattice
     plotdat(lattice,pflag,nmax)
-    # Create arrays to store energy, acceptance ratio and order parameter
-    energy = np.zeros(nsteps+1,dtype=np.dtype)
-    ratio = np.zeros(nsteps+1,dtype=np.dtype)
-    order = np.zeros(nsteps+1,dtype=np.dtype)
-    # Set initial values in arrays
-    energy[0] = all_energy(lattice,nmax)
-    ratio[0] = 0.5 # ideal value
-    order[0] = get_order(lattice,nmax)
+    # Create local arrays for each process
+    local_energy = np.zeros(local_nsteps+1, dtype=np.float64)  # Ensure dtype is np.float64
+    local_ratio = np.zeros(local_nsteps+1, dtype=np.float64)   # Ensure dtype is np.float64
+    local_order = np.zeros(local_nsteps+1, dtype=np.float64)   # Ensure dtype is np.float64
+
+    # Set initial values in local arrays
+    local_energy[0] = all_energy(lattice, nmax)
+    local_ratio[0] = 0.5  # ideal value
+    local_order[0] = get_order(lattice, nmax)
 
     # Begin doing and timing some MC steps.
     initial = time.time()
-    for it in range(1,nsteps+1):
-        ratio[it] = MC_step(lattice,temp,nmax)
-        energy[it] = all_energy(lattice,nmax)
-        order[it] = get_order(lattice,nmax)
+    for it in range(1, local_nsteps + 1):
+        local_ratio[it] = MC_step(lattice, temp, nmax)
+        local_energy[it] = all_energy(lattice, nmax)
+        local_order[it] = get_order(lattice, nmax)
     final = time.time()
-    runtime = final-initial
-    
-        # MPI Integration: Gather data from all MPI processes
-    all_ratio = comm.gather(ratio, root=0)
-    all_energy = comm.gather(energy, root=0)
-    all_order = comm.gather(order, root=0)
-    if rank == 0:
-        # Final outputs and saving data
-        savedat(lattice, nsteps, temp, runtime, all_ratio, all_energy, all_order, nmax)
-        plotdat(lattice, pflag, nmax)
+    runtime = final - initial
 
+    # Combine results from all processes
+    global_energy = np.zeros(nsteps + 1, dtype=np.float64)  # Ensure dtype is np.float64
+    global_ratio = np.zeros(nsteps + 1, dtype=np.float64)   # Ensure dtype is np.float64
+    global_order = np.zeros(nsteps + 1, dtype=np.float64)   # Ensure dtype is np.float64
+
+    comm.Allreduce(local_energy, global_energy, op=MPI.SUM)
+    comm.Allreduce(local_ratio, global_ratio, op=MPI.SUM)
+    comm.Allreduce(local_order, global_order, op=MPI.SUM)
+
+    if rank == 0:
+        # Final outputs
+        print("{}: Size: {:d}, Steps: {:d}, T*: {:5.3f}: Order: {:5.3f}, Time: {:8.6f} s".format(program, nmax, nsteps, temp, global_order[nsteps - 1], runtime))
+        # Plot final frame of lattice and generate output file
+        savedat(lattice, nsteps, temp, runtime, global_ratio, global_energy, global_order, nmax)
+        plotdat(lattice, pflag, nmax)
 #=======================================================================
 # Main part of program, getting command line arguments and calling
 # main simulation function.
