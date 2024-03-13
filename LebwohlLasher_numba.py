@@ -164,7 +164,7 @@ def one_energy(arr,ix,iy,nmax):
     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
     return en
 #=======================================================================
-@jit(nopython=True, parallel = True)
+@jit(nopython=True)
 def all_energy(arr,nmax):
     """
     Arguments:
@@ -177,12 +177,12 @@ def all_energy(arr,nmax):
 	  enall (float) = reduced energy of lattice.
     """
     enall = 0.0
-    for i in prange(nmax):
+    for i in range(nmax):
         for j in range(nmax):
             enall += one_energy(arr,i,j,nmax)
     return enall
 #=======================================================================
-@jit(nopython=True, parallel = True) 
+@jit(nopython=True) 
 def get_order(arr,nmax):
     """
     Arguments:

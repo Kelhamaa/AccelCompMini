@@ -1212,6 +1212,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include "numpy/ndarraytypes.h"
 #include "numpy/arrayscalars.h"
 #include "numpy/ufuncobject.h"
+#include <math.h>
 #include "pythread.h"
 #include <stdlib.h>
 #ifdef _OPENMP
@@ -2825,14 +2826,6 @@ static CYTHON_INLINE long __Pyx_mod_long(long, long);
 /* BufferIndexError.proto */
 static void __Pyx_RaiseBufferIndexError(int axis);
 
-/* PyFloatBinop.proto */
-#if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyFloat_SubtractCObj(PyObject *op1, PyObject *op2, double floatval, int inplace, int zerodivision_check);
-#else
-#define __Pyx_PyFloat_SubtractCObj(op1, op2, floatval, inplace, zerodivision_check)\
-    (inplace ? PyNumber_InPlaceSubtract(op1, op2) : PyNumber_Subtract(op1, op2))
-#endif
-
 /* PyObject_GenericGetAttrNoDict.proto */
 #if CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP && PY_VERSION_HEX < 0x03070000
 static CYTHON_INLINE PyObject* __Pyx_PyObject_GenericGetAttrNoDict(PyObject* obj, PyObject* attr_name);
@@ -3349,6 +3342,8 @@ static CYTHON_INLINE char *__pyx_f_5numpy_7ndarray_4data_data(PyArrayObject *__p
 
 /* Module declarations from "numpy" */
 
+/* Module declarations from "libc.math" */
+
 /* Module declarations from "LebwohlLasher_cmath" */
 static PyObject *__pyx_collections_abc_Sequence = 0;
 static PyObject *generic = 0;
@@ -3453,7 +3448,6 @@ static const char __pyx_k_arr[] = "arr";
 static const char __pyx_k_cos[] = "cos";
 static const char __pyx_k_en0[] = "en0";
 static const char __pyx_k_en1[] = "en1";
-static const char __pyx_k_exp[] = "exp";
 static const char __pyx_k_eye[] = "eye";
 static const char __pyx_k_fig[] = "fig";
 static const char __pyx_k_got[] = " (got ";
@@ -3506,7 +3500,6 @@ static const char __pyx_k_ASCII[] = "ASCII";
 static const char __pyx_k_array[] = "array";
 static const char __pyx_k_boltz[] = "boltz";
 static const char __pyx_k_class[] = "__class__";
-static const char __pyx_k_cmath[] = "cmath";
 static const char __pyx_k_count[] = "count";
 static const char __pyx_k_enall[] = "enall";
 static const char __pyx_k_enter[] = "__enter__";
@@ -3792,6 +3785,8 @@ typedef struct {
   PyTypeObject *__pyx_ptype_5numpy_character;
   PyTypeObject *__pyx_ptype_5numpy_ufunc;
   #if CYTHON_USE_MODULE_STATE
+  #endif
+  #if CYTHON_USE_MODULE_STATE
   PyObject *__pyx_type_19LebwohlLasher_cmath___pyx_scope_struct__plotdat;
   PyObject *__pyx_type___pyx_array;
   PyObject *__pyx_type___pyx_MemviewEnum;
@@ -3888,7 +3883,6 @@ typedef struct {
   PyObject *__pyx_n_s_class_getitem;
   PyObject *__pyx_n_s_cline_in_traceback;
   PyObject *__pyx_n_s_cmap;
-  PyObject *__pyx_n_s_cmath;
   PyObject *__pyx_n_s_collections;
   PyObject *__pyx_kp_s_collections_abc;
   PyObject *__pyx_n_s_cols;
@@ -3916,7 +3910,6 @@ typedef struct {
   PyObject *__pyx_n_s_equal;
   PyObject *__pyx_n_s_error;
   PyObject *__pyx_n_s_exit;
-  PyObject *__pyx_n_s_exp;
   PyObject *__pyx_n_s_eye;
   PyObject *__pyx_n_s_fig;
   PyObject *__pyx_n_s_file;
@@ -4068,10 +4061,8 @@ typedef struct {
   PyObject *__pyx_float_0_5;
   PyObject *__pyx_float_1_0;
   PyObject *__pyx_float_2_0;
-  PyObject *__pyx_float_3_0;
   PyObject *__pyx_int_0;
   PyObject *__pyx_int_1;
-  PyObject *__pyx_int_2;
   PyObject *__pyx_int_3;
   PyObject *__pyx_int_112105877;
   PyObject *__pyx_int_136983863;
@@ -4269,7 +4260,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_class_getitem);
   Py_CLEAR(clear_module_state->__pyx_n_s_cline_in_traceback);
   Py_CLEAR(clear_module_state->__pyx_n_s_cmap);
-  Py_CLEAR(clear_module_state->__pyx_n_s_cmath);
   Py_CLEAR(clear_module_state->__pyx_n_s_collections);
   Py_CLEAR(clear_module_state->__pyx_kp_s_collections_abc);
   Py_CLEAR(clear_module_state->__pyx_n_s_cols);
@@ -4297,7 +4287,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_equal);
   Py_CLEAR(clear_module_state->__pyx_n_s_error);
   Py_CLEAR(clear_module_state->__pyx_n_s_exit);
-  Py_CLEAR(clear_module_state->__pyx_n_s_exp);
   Py_CLEAR(clear_module_state->__pyx_n_s_eye);
   Py_CLEAR(clear_module_state->__pyx_n_s_fig);
   Py_CLEAR(clear_module_state->__pyx_n_s_file);
@@ -4449,10 +4438,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_float_0_5);
   Py_CLEAR(clear_module_state->__pyx_float_1_0);
   Py_CLEAR(clear_module_state->__pyx_float_2_0);
-  Py_CLEAR(clear_module_state->__pyx_float_3_0);
   Py_CLEAR(clear_module_state->__pyx_int_0);
   Py_CLEAR(clear_module_state->__pyx_int_1);
-  Py_CLEAR(clear_module_state->__pyx_int_2);
   Py_CLEAR(clear_module_state->__pyx_int_3);
   Py_CLEAR(clear_module_state->__pyx_int_112105877);
   Py_CLEAR(clear_module_state->__pyx_int_136983863);
@@ -4628,7 +4615,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_class_getitem);
   Py_VISIT(traverse_module_state->__pyx_n_s_cline_in_traceback);
   Py_VISIT(traverse_module_state->__pyx_n_s_cmap);
-  Py_VISIT(traverse_module_state->__pyx_n_s_cmath);
   Py_VISIT(traverse_module_state->__pyx_n_s_collections);
   Py_VISIT(traverse_module_state->__pyx_kp_s_collections_abc);
   Py_VISIT(traverse_module_state->__pyx_n_s_cols);
@@ -4656,7 +4642,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_equal);
   Py_VISIT(traverse_module_state->__pyx_n_s_error);
   Py_VISIT(traverse_module_state->__pyx_n_s_exit);
-  Py_VISIT(traverse_module_state->__pyx_n_s_exp);
   Py_VISIT(traverse_module_state->__pyx_n_s_eye);
   Py_VISIT(traverse_module_state->__pyx_n_s_fig);
   Py_VISIT(traverse_module_state->__pyx_n_s_file);
@@ -4808,10 +4793,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_float_0_5);
   Py_VISIT(traverse_module_state->__pyx_float_1_0);
   Py_VISIT(traverse_module_state->__pyx_float_2_0);
-  Py_VISIT(traverse_module_state->__pyx_float_3_0);
   Py_VISIT(traverse_module_state->__pyx_int_0);
   Py_VISIT(traverse_module_state->__pyx_int_1);
-  Py_VISIT(traverse_module_state->__pyx_int_2);
   Py_VISIT(traverse_module_state->__pyx_int_3);
   Py_VISIT(traverse_module_state->__pyx_int_112105877);
   Py_VISIT(traverse_module_state->__pyx_int_136983863);
@@ -4919,6 +4902,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_ptype_5numpy_character __pyx_mstate_global->__pyx_ptype_5numpy_character
 #define __pyx_ptype_5numpy_ufunc __pyx_mstate_global->__pyx_ptype_5numpy_ufunc
 #if CYTHON_USE_MODULE_STATE
+#endif
+#if CYTHON_USE_MODULE_STATE
 #define __pyx_type_19LebwohlLasher_cmath___pyx_scope_struct__plotdat __pyx_mstate_global->__pyx_type_19LebwohlLasher_cmath___pyx_scope_struct__plotdat
 #define __pyx_type___pyx_array __pyx_mstate_global->__pyx_type___pyx_array
 #define __pyx_type___pyx_MemviewEnum __pyx_mstate_global->__pyx_type___pyx_MemviewEnum
@@ -5015,7 +5000,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_class_getitem __pyx_mstate_global->__pyx_n_s_class_getitem
 #define __pyx_n_s_cline_in_traceback __pyx_mstate_global->__pyx_n_s_cline_in_traceback
 #define __pyx_n_s_cmap __pyx_mstate_global->__pyx_n_s_cmap
-#define __pyx_n_s_cmath __pyx_mstate_global->__pyx_n_s_cmath
 #define __pyx_n_s_collections __pyx_mstate_global->__pyx_n_s_collections
 #define __pyx_kp_s_collections_abc __pyx_mstate_global->__pyx_kp_s_collections_abc
 #define __pyx_n_s_cols __pyx_mstate_global->__pyx_n_s_cols
@@ -5043,7 +5027,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_equal __pyx_mstate_global->__pyx_n_s_equal
 #define __pyx_n_s_error __pyx_mstate_global->__pyx_n_s_error
 #define __pyx_n_s_exit __pyx_mstate_global->__pyx_n_s_exit
-#define __pyx_n_s_exp __pyx_mstate_global->__pyx_n_s_exp
 #define __pyx_n_s_eye __pyx_mstate_global->__pyx_n_s_eye
 #define __pyx_n_s_fig __pyx_mstate_global->__pyx_n_s_fig
 #define __pyx_n_s_file __pyx_mstate_global->__pyx_n_s_file
@@ -5195,10 +5178,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_float_0_5 __pyx_mstate_global->__pyx_float_0_5
 #define __pyx_float_1_0 __pyx_mstate_global->__pyx_float_1_0
 #define __pyx_float_2_0 __pyx_mstate_global->__pyx_float_2_0
-#define __pyx_float_3_0 __pyx_mstate_global->__pyx_float_3_0
 #define __pyx_int_0 __pyx_mstate_global->__pyx_int_0
 #define __pyx_int_1 __pyx_mstate_global->__pyx_int_1
-#define __pyx_int_2 __pyx_mstate_global->__pyx_int_2
 #define __pyx_int_3 __pyx_mstate_global->__pyx_int_3
 #define __pyx_int_112105877 __pyx_mstate_global->__pyx_int_112105877
 #define __pyx_int_136983863 __pyx_mstate_global->__pyx_int_136983863
@@ -20732,7 +20713,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_2plotdat(CYTHON_UNUSED PyObject 
  * 
  *     if pflag==0:             # <<<<<<<<<<<<<<
  *         return
- *     u = cmath.cos(arr)
+ *     u = np.cos(arr)
  */
   __pyx_t_1 = (__pyx_v_pflag == 0);
   if (__pyx_t_1) {
@@ -20741,8 +20722,8 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_2plotdat(CYTHON_UNUSED PyObject 
  * 
  *     if pflag==0:
  *         return             # <<<<<<<<<<<<<<
- *     u = cmath.cos(arr)
- *     v = cmath.sin(arr)
+ *     u = np.cos(arr)
+ *     v = np.sin(arr)
  */
     __Pyx_XDECREF(__pyx_r);
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
@@ -20753,18 +20734,18 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_2plotdat(CYTHON_UNUSED PyObject 
  * 
  *     if pflag==0:             # <<<<<<<<<<<<<<
  *         return
- *     u = cmath.cos(arr)
+ *     u = np.cos(arr)
  */
   }
 
   /* "LebwohlLasher_cmath.pyx":50
  *     if pflag==0:
  *         return
- *     u = cmath.cos(arr)             # <<<<<<<<<<<<<<
- *     v = cmath.sin(arr)
+ *     u = np.cos(arr)             # <<<<<<<<<<<<<<
+ *     v = np.sin(arr)
  *     x = np.arange(float(nmax))
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_cmath); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 50, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_cos); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -20802,12 +20783,12 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_2plotdat(CYTHON_UNUSED PyObject 
 
   /* "LebwohlLasher_cmath.pyx":51
  *         return
- *     u = cmath.cos(arr)
- *     v = cmath.sin(arr)             # <<<<<<<<<<<<<<
+ *     u = np.cos(arr)
+ *     v = np.sin(arr)             # <<<<<<<<<<<<<<
  *     x = np.arange(float(nmax))
  *     y = np.arange(float(nmax))
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_cmath); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 51, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_sin); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 51, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -20844,8 +20825,8 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_2plotdat(CYTHON_UNUSED PyObject 
   __pyx_t_7.data = NULL;
 
   /* "LebwohlLasher_cmath.pyx":52
- *     u = cmath.cos(arr)
- *     v = cmath.sin(arr)
+ *     u = np.cos(arr)
+ *     v = np.sin(arr)
  *     x = np.arange(float(nmax))             # <<<<<<<<<<<<<<
  *     y = np.arange(float(nmax))
  *     cols = np.zeros((nmax, nmax))
@@ -20887,7 +20868,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_2plotdat(CYTHON_UNUSED PyObject 
   __pyx_t_8.data = NULL;
 
   /* "LebwohlLasher_cmath.pyx":53
- *     v = cmath.sin(arr)
+ *     v = np.sin(arr)
  *     x = np.arange(float(nmax))
  *     y = np.arange(float(nmax))             # <<<<<<<<<<<<<<
  *     cols = np.zeros((nmax, nmax))
@@ -22694,11 +22675,6 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_6one_energy(CYTHON_UNUSED PyObje
   Py_ssize_t __pyx_t_5;
   Py_ssize_t __pyx_t_6;
   PyObject *__pyx_t_7 = NULL;
-  PyObject *__pyx_t_8 = NULL;
-  PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  double __pyx_t_12;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -22773,7 +22749,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_6one_energy(CYTHON_UNUSED PyObje
  * # to the energy
  * #
  *     ang = arr[ix,iy]-arr[ixp,iy]             # <<<<<<<<<<<<<<
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     ang = arr[ix,iy]-arr[ixm,iy]
  */
   __pyx_t_2 = __pyx_v_ix;
@@ -22811,67 +22787,17 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_6one_energy(CYTHON_UNUSED PyObje
   /* "LebwohlLasher_cmath.pyx":138
  * #
  *     ang = arr[ix,iy]-arr[ixp,iy]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)             # <<<<<<<<<<<<<<
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)             # <<<<<<<<<<<<<<
  *     ang = arr[ix,iy]-arr[ixm,iy]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  */
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_en); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_n_s_np); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_cos); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_ang); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_11 = NULL;
-  __pyx_t_4 = 0;
-  #if CYTHON_UNPACK_METHODS
-  if (unlikely(PyMethod_Check(__pyx_t_10))) {
-    __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_10);
-    if (likely(__pyx_t_11)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-      __Pyx_INCREF(__pyx_t_11);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_10, function);
-      __pyx_t_4 = 1;
-    }
-  }
-  #endif
-  {
-    PyObject *__pyx_callargs[2] = {__pyx_t_11, __pyx_t_9};
-    __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
-    __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 138, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  }
-  __pyx_t_10 = PyNumber_Power(__pyx_t_8, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyNumber_Multiply(__pyx_float_3_0, __pyx_t_10); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_PyFloat_SubtractCObj(__pyx_float_1_0, __pyx_t_8, 1.0, 0, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyNumber_Multiply(__pyx_float_0_5, __pyx_t_10); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __pyx_t_10 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_8); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_12 = __pyx_PyFloat_AsDouble(__pyx_t_10); if (unlikely((__pyx_t_12 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 138, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __pyx_v_en = __pyx_t_12;
+  __pyx_v_en = (__pyx_v_en + (0.5 * (1.0 - (3.0 * pow(cos(__pyx_v_ang), 2.0)))));
 
   /* "LebwohlLasher_cmath.pyx":139
  *     ang = arr[ix,iy]-arr[ixp,iy]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     ang = arr[ix,iy]-arr[ixm,iy]             # <<<<<<<<<<<<<<
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     ang = arr[ix,iy]-arr[ix,iyp]
  */
   __pyx_t_6 = __pyx_v_ix;
@@ -22907,69 +22833,19 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_6one_energy(CYTHON_UNUSED PyObje
   __pyx_v_ang = ((*((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_arr.data + __pyx_t_6 * __pyx_v_arr.strides[0]) )) + __pyx_t_5)) ))) - (*((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_arr.data + __pyx_t_3 * __pyx_v_arr.strides[0]) )) + __pyx_t_2)) ))));
 
   /* "LebwohlLasher_cmath.pyx":140
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     ang = arr[ix,iy]-arr[ixm,iy]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)             # <<<<<<<<<<<<<<
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)             # <<<<<<<<<<<<<<
  *     ang = arr[ix,iy]-arr[ix,iyp]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  */
-  __pyx_t_10 = PyFloat_FromDouble(__pyx_v_en); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_cos); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_ang); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_11 = NULL;
-  __pyx_t_4 = 0;
-  #if CYTHON_UNPACK_METHODS
-  if (unlikely(PyMethod_Check(__pyx_t_9))) {
-    __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_9);
-    if (likely(__pyx_t_11)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
-      __Pyx_INCREF(__pyx_t_11);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_9, function);
-      __pyx_t_4 = 1;
-    }
-  }
-  #endif
-  {
-    PyObject *__pyx_callargs[2] = {__pyx_t_11, __pyx_t_7};
-    __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
-    __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 140, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  }
-  __pyx_t_9 = PyNumber_Power(__pyx_t_8, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyNumber_Multiply(__pyx_float_3_0, __pyx_t_9); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __pyx_t_9 = __Pyx_PyFloat_SubtractCObj(__pyx_float_1_0, __pyx_t_8, 1.0, 0, 0); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyNumber_Multiply(__pyx_float_0_5, __pyx_t_9); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __pyx_t_9 = PyNumber_InPlaceAdd(__pyx_t_10, __pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_12 = __pyx_PyFloat_AsDouble(__pyx_t_9); if (unlikely((__pyx_t_12 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 140, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __pyx_v_en = __pyx_t_12;
+  __pyx_v_en = (__pyx_v_en + (0.5 * (1.0 - (3.0 * pow(cos(__pyx_v_ang), 2.0)))));
 
   /* "LebwohlLasher_cmath.pyx":141
  *     ang = arr[ix,iy]-arr[ixm,iy]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     ang = arr[ix,iy]-arr[ix,iyp]             # <<<<<<<<<<<<<<
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     ang = arr[ix,iy]-arr[ix,iym]
  */
   __pyx_t_2 = __pyx_v_ix;
@@ -23005,69 +22881,19 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_6one_energy(CYTHON_UNUSED PyObje
   __pyx_v_ang = ((*((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_arr.data + __pyx_t_2 * __pyx_v_arr.strides[0]) )) + __pyx_t_3)) ))) - (*((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_arr.data + __pyx_t_5 * __pyx_v_arr.strides[0]) )) + __pyx_t_6)) ))));
 
   /* "LebwohlLasher_cmath.pyx":142
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     ang = arr[ix,iy]-arr[ix,iyp]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)             # <<<<<<<<<<<<<<
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)             # <<<<<<<<<<<<<<
  *     ang = arr[ix,iy]-arr[ix,iym]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  */
-  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_en); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 142, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_GetModuleGlobalName(__pyx_t_10, __pyx_n_s_np); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 142, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_10, __pyx_n_s_cos); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 142, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __pyx_t_10 = PyFloat_FromDouble(__pyx_v_ang); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 142, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __pyx_t_11 = NULL;
-  __pyx_t_4 = 0;
-  #if CYTHON_UNPACK_METHODS
-  if (unlikely(PyMethod_Check(__pyx_t_7))) {
-    __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_7);
-    if (likely(__pyx_t_11)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_11);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_7, function);
-      __pyx_t_4 = 1;
-    }
-  }
-  #endif
-  {
-    PyObject *__pyx_callargs[2] = {__pyx_t_11, __pyx_t_10};
-    __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
-    __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 142, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  }
-  __pyx_t_7 = PyNumber_Power(__pyx_t_8, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 142, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyNumber_Multiply(__pyx_float_3_0, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 142, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = __Pyx_PyFloat_SubtractCObj(__pyx_float_1_0, __pyx_t_8, 1.0, 0, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 142, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyNumber_Multiply(__pyx_float_0_5, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 142, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_t_9, __pyx_t_8); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 142, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_12 = __pyx_PyFloat_AsDouble(__pyx_t_7); if (unlikely((__pyx_t_12 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 142, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_v_en = __pyx_t_12;
+  __pyx_v_en = (__pyx_v_en + (0.5 * (1.0 - (3.0 * pow(cos(__pyx_v_ang), 2.0)))));
 
   /* "LebwohlLasher_cmath.pyx":143
  *     ang = arr[ix,iy]-arr[ix,iyp]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     ang = arr[ix,iy]-arr[ix,iym]             # <<<<<<<<<<<<<<
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     return en
  */
   __pyx_t_6 = __pyx_v_ix;
@@ -23103,76 +22929,26 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_6one_energy(CYTHON_UNUSED PyObje
   __pyx_v_ang = ((*((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_arr.data + __pyx_t_6 * __pyx_v_arr.strides[0]) )) + __pyx_t_5)) ))) - (*((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_arr.data + __pyx_t_3 * __pyx_v_arr.strides[0]) )) + __pyx_t_2)) ))));
 
   /* "LebwohlLasher_cmath.pyx":144
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     ang = arr[ix,iy]-arr[ix,iym]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)             # <<<<<<<<<<<<<<
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)             # <<<<<<<<<<<<<<
  *     return en
  * #=======================================================================
  */
-  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_en); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 144, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  __Pyx_GetModuleGlobalName(__pyx_t_9, __pyx_n_s_np); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 144, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_9, __pyx_n_s_cos); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 144, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_ang); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 144, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_9);
-  __pyx_t_11 = NULL;
-  __pyx_t_4 = 0;
-  #if CYTHON_UNPACK_METHODS
-  if (unlikely(PyMethod_Check(__pyx_t_10))) {
-    __pyx_t_11 = PyMethod_GET_SELF(__pyx_t_10);
-    if (likely(__pyx_t_11)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_10);
-      __Pyx_INCREF(__pyx_t_11);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_10, function);
-      __pyx_t_4 = 1;
-    }
-  }
-  #endif
-  {
-    PyObject *__pyx_callargs[2] = {__pyx_t_11, __pyx_t_9};
-    __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_10, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
-    __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 144, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  }
-  __pyx_t_10 = PyNumber_Power(__pyx_t_8, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 144, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyNumber_Multiply(__pyx_float_3_0, __pyx_t_10); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 144, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_PyFloat_SubtractCObj(__pyx_float_1_0, __pyx_t_8, 1.0, 0, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 144, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_8 = PyNumber_Multiply(__pyx_float_0_5, __pyx_t_10); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 144, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_8);
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __pyx_t_10 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_8); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 144, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-  __pyx_t_12 = __pyx_PyFloat_AsDouble(__pyx_t_10); if (unlikely((__pyx_t_12 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 144, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-  __pyx_v_en = __pyx_t_12;
+  __pyx_v_en = (__pyx_v_en + (0.5 * (1.0 - (3.0 * pow(cos(__pyx_v_ang), 2.0)))));
 
   /* "LebwohlLasher_cmath.pyx":145
  *     ang = arr[ix,iy]-arr[ix,iym]
- *     en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+ *     en += 0.5*(1.0 - 3.0*cos(ang)**2)
  *     return en             # <<<<<<<<<<<<<<
  * #=======================================================================
  * def all_energy(double[:, ::1] arr, int nmax):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_10 = PyFloat_FromDouble(__pyx_v_en); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 145, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_10);
-  __pyx_r = __pyx_t_10;
-  __pyx_t_10 = 0;
+  __pyx_t_7 = PyFloat_FromDouble(__pyx_v_en); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_7);
+  __pyx_r = __pyx_t_7;
+  __pyx_t_7 = 0;
   goto __pyx_L0;
 
   /* "LebwohlLasher_cmath.pyx":112
@@ -23186,10 +22962,6 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_6one_energy(CYTHON_UNUSED PyObje
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_11);
   __Pyx_AddTraceback("LebwohlLasher_cmath.one_energy", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -23621,7 +23393,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_10get_order(CYTHON_UNUSED PyObje
   /* "LebwohlLasher_cmath.pyx":181
  *     cdef eigenvalues
  *     cdef int a, b, i, j
- *     lab = np.vstack((cmath.cos(arr),cmath.sin(arr),np.zeros_like(arr))).reshape(3,nmax,nmax)             # <<<<<<<<<<<<<<
+ *     lab = np.vstack((np.cos(arr),np.sin(arr),np.zeros_like(arr))).reshape(3,nmax,nmax)             # <<<<<<<<<<<<<<
  *     Qab = np.einsum('aij,bij->ab', lab, lab) - np.eye(3)
  *     Qab /= (2*nmax*nmax)
  */
@@ -23630,7 +23402,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_10get_order(CYTHON_UNUSED PyObje
   __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_vstack); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 181, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_cmath); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 181, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 181, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_cos); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 181, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
@@ -23660,7 +23432,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_10get_order(CYTHON_UNUSED PyObje
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
-  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_cmath); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 181, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 181, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_sin); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 181, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
@@ -23790,7 +23562,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_10get_order(CYTHON_UNUSED PyObje
 
   /* "LebwohlLasher_cmath.pyx":182
  *     cdef int a, b, i, j
- *     lab = np.vstack((cmath.cos(arr),cmath.sin(arr),np.zeros_like(arr))).reshape(3,nmax,nmax)
+ *     lab = np.vstack((np.cos(arr),np.sin(arr),np.zeros_like(arr))).reshape(3,nmax,nmax)
  *     Qab = np.einsum('aij,bij->ab', lab, lab) - np.eye(3)             # <<<<<<<<<<<<<<
  *     Qab /= (2*nmax*nmax)
  *     eigenvalues = np.linalg.eigvals(Qab)
@@ -23857,7 +23629,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_10get_order(CYTHON_UNUSED PyObje
   __pyx_t_2 = 0;
 
   /* "LebwohlLasher_cmath.pyx":183
- *     lab = np.vstack((cmath.cos(arr),cmath.sin(arr),np.zeros_like(arr))).reshape(3,nmax,nmax)
+ *     lab = np.vstack((np.cos(arr),np.sin(arr),np.zeros_like(arr))).reshape(3,nmax,nmax)
  *     Qab = np.einsum('aij,bij->ab', lab, lab) - np.eye(3)
  *     Qab /= (2*nmax*nmax)             # <<<<<<<<<<<<<<
  *     eigenvalues = np.linalg.eigvals(Qab)
@@ -24457,7 +24229,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_12MC_step(CYTHON_UNUSED PyObject
  *             en0 = one_energy(arr, ix, iy, nmax)
  *             arr[ix, iy] += ang             # <<<<<<<<<<<<<<
  *             en1 = one_energy(arr, ix, iy, nmax)
- *             if en1 <= en0 or np.exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):
+ *             if en1 <= en0 or exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):
  */
       __pyx_t_16 = __pyx_v_ix;
       __pyx_t_17 = __pyx_v_iy;
@@ -24480,7 +24252,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_12MC_step(CYTHON_UNUSED PyObject
  *             en0 = one_energy(arr, ix, iy, nmax)
  *             arr[ix, iy] += ang
  *             en1 = one_energy(arr, ix, iy, nmax)             # <<<<<<<<<<<<<<
- *             if en1 <= en0 or np.exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):
+ *             if en1 <= en0 or exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):
  *                 accept += 1
  */
       __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_one_energy); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 219, __pyx_L1_error)
@@ -24526,7 +24298,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_12MC_step(CYTHON_UNUSED PyObject
       /* "LebwohlLasher_cmath.pyx":220
  *             arr[ix, iy] += ang
  *             en1 = one_energy(arr, ix, iy, nmax)
- *             if en1 <= en0 or np.exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):             # <<<<<<<<<<<<<<
+ *             if en1 <= en0 or exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):             # <<<<<<<<<<<<<<
  *                 accept += 1
  *             else:
  */
@@ -24536,64 +24308,36 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_12MC_step(CYTHON_UNUSED PyObject
         __pyx_t_18 = __pyx_t_19;
         goto __pyx_L8_bool_binop_done;
       }
-      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_exp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_13 = (-(__pyx_v_en1 - __pyx_v_en0));
       if (unlikely(__pyx_v_Ts == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "float division");
         __PYX_ERR(0, 220, __pyx_L1_error)
       }
-      __pyx_t_3 = PyFloat_FromDouble((__pyx_t_13 / ((double)__pyx_v_Ts))); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __pyx_t_2 = PyFloat_FromDouble(exp((__pyx_t_13 / ((double)__pyx_v_Ts)))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = NULL;
-      __pyx_t_12 = 0;
-      #if CYTHON_UNPACK_METHODS
-      if (unlikely(PyMethod_Check(__pyx_t_1))) {
-        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_1);
-        if (likely(__pyx_t_4)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
-          __Pyx_INCREF(__pyx_t_4);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_1, function);
-          __pyx_t_12 = 1;
-        }
-      }
-      #endif
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_t_3};
-        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_12, 1+__pyx_t_12);
-        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 220, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      }
-      __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_random); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_uniform); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_random); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_uniform); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = PyObject_RichCompare(__pyx_t_2, __pyx_t_3, Py_GE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 220, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_t_3 = PyObject_RichCompare(__pyx_t_2, __pyx_t_1, Py_GE); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 220, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_19 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_19 < 0))) __PYX_ERR(0, 220, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      __pyx_t_19 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_19 < 0))) __PYX_ERR(0, 220, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_18 = __pyx_t_19;
       __pyx_L8_bool_binop_done:;
       if (__pyx_t_18) {
 
         /* "LebwohlLasher_cmath.pyx":221
  *             en1 = one_energy(arr, ix, iy, nmax)
- *             if en1 <= en0 or np.exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):
+ *             if en1 <= en0 or exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):
  *                 accept += 1             # <<<<<<<<<<<<<<
  *             else:
  *                 arr[ix, iy] -= ang
@@ -24603,7 +24347,7 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_12MC_step(CYTHON_UNUSED PyObject
         /* "LebwohlLasher_cmath.pyx":220
  *             arr[ix, iy] += ang
  *             en1 = one_energy(arr, ix, iy, nmax)
- *             if en1 <= en0 or np.exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):             # <<<<<<<<<<<<<<
+ *             if en1 <= en0 or exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):             # <<<<<<<<<<<<<<
  *                 accept += 1
  *             else:
  */
@@ -24652,10 +24396,10 @@ static PyObject *__pyx_pf_19LebwohlLasher_cmath_12MC_step(CYTHON_UNUSED PyObject
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
     __PYX_ERR(0, 224, __pyx_L1_error)
   }
-  __pyx_t_1 = PyFloat_FromDouble((__pyx_v_accept / ((double)__pyx_t_6))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 224, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_t_3 = PyFloat_FromDouble((__pyx_v_accept / ((double)__pyx_t_6))); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 224, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_r = __pyx_t_3;
+  __pyx_t_3 = 0;
   goto __pyx_L0;
 
   /* "LebwohlLasher_cmath.pyx":187
@@ -26738,7 +26482,6 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_class_getitem, __pyx_k_class_getitem, sizeof(__pyx_k_class_getitem), 0, 0, 1, 1},
     {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
     {&__pyx_n_s_cmap, __pyx_k_cmap, sizeof(__pyx_k_cmap), 0, 0, 1, 1},
-    {&__pyx_n_s_cmath, __pyx_k_cmath, sizeof(__pyx_k_cmath), 0, 0, 1, 1},
     {&__pyx_n_s_collections, __pyx_k_collections, sizeof(__pyx_k_collections), 0, 0, 1, 1},
     {&__pyx_kp_s_collections_abc, __pyx_k_collections_abc, sizeof(__pyx_k_collections_abc), 0, 0, 1, 0},
     {&__pyx_n_s_cols, __pyx_k_cols, sizeof(__pyx_k_cols), 0, 0, 1, 1},
@@ -26766,7 +26509,6 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_equal, __pyx_k_equal, sizeof(__pyx_k_equal), 0, 0, 1, 1},
     {&__pyx_n_s_error, __pyx_k_error, sizeof(__pyx_k_error), 0, 0, 1, 1},
     {&__pyx_n_s_exit, __pyx_k_exit, sizeof(__pyx_k_exit), 0, 0, 1, 1},
-    {&__pyx_n_s_exp, __pyx_k_exp, sizeof(__pyx_k_exp), 0, 0, 1, 1},
     {&__pyx_n_s_eye, __pyx_k_eye, sizeof(__pyx_k_eye), 0, 0, 1, 1},
     {&__pyx_n_s_fig, __pyx_k_fig, sizeof(__pyx_k_fig), 0, 0, 1, 1},
     {&__pyx_n_s_file, __pyx_k_file, sizeof(__pyx_k_file), 0, 0, 1, 1},
@@ -27059,7 +26801,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "LebwohlLasher_cmath.pyx":220
  *             arr[ix, iy] += ang
  *             en1 = one_energy(arr, ix, iy, nmax)
- *             if en1 <= en0 or np.exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):             # <<<<<<<<<<<<<<
+ *             if en1 <= en0 or exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):             # <<<<<<<<<<<<<<
  *                 accept += 1
  *             else:
  */
@@ -27173,7 +26915,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * import numpy as np
  * import matplotlib.pyplot as plt             # <<<<<<<<<<<<<<
  * import matplotlib as mpl
- * import cmath
+ * from libc.math cimport sin,cos,exp
  */
   __pyx_tuple__29 = PyTuple_Pack(2, __pyx_n_s_matplotlib, __pyx_n_s_pyplot); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__29);
@@ -27288,10 +27030,8 @@ static CYTHON_SMALL_CODE int __Pyx_InitConstants(void) {
   __pyx_float_0_5 = PyFloat_FromDouble(0.5); if (unlikely(!__pyx_float_0_5)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_float_1_0 = PyFloat_FromDouble(1.0); if (unlikely(!__pyx_float_1_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_float_2_0 = PyFloat_FromDouble(2.0); if (unlikely(!__pyx_float_2_0)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_float_3_0 = PyFloat_FromDouble(3.0); if (unlikely(!__pyx_float_3_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_3 = PyInt_FromLong(3); if (unlikely(!__pyx_int_3)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_112105877 = PyInt_FromLong(112105877L); if (unlikely(!__pyx_int_112105877)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_136983863 = PyInt_FromLong(136983863L); if (unlikely(!__pyx_int_136983863)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -28461,7 +28201,7 @@ if (!__Pyx_RefNanny) {
  * import numpy as np
  * import matplotlib.pyplot as plt             # <<<<<<<<<<<<<<
  * import matplotlib as mpl
- * import cmath
+ * from libc.math cimport sin,cos,exp
  */
   __pyx_t_7 = __Pyx_ImportDottedModule(__pyx_n_s_matplotlib_pyplot, __pyx_tuple__29); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
@@ -28472,24 +28212,12 @@ if (!__Pyx_RefNanny) {
  * import numpy as np
  * import matplotlib.pyplot as plt
  * import matplotlib as mpl             # <<<<<<<<<<<<<<
- * import cmath
+ * from libc.math cimport sin,cos,exp
  * 
  */
   __pyx_t_7 = __Pyx_ImportDottedModule(__pyx_n_s_matplotlib, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_mpl, __pyx_t_7) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-
-  /* "LebwohlLasher_cmath.pyx":8
- * import matplotlib.pyplot as plt
- * import matplotlib as mpl
- * import cmath             # <<<<<<<<<<<<<<
- * 
- * #=======================================================================
- */
-  __pyx_t_7 = __Pyx_ImportDottedModule(__pyx_n_s_cmath, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 8, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_cmath, __pyx_t_7) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
   /* "LebwohlLasher_cmath.pyx":11
@@ -32969,89 +32697,6 @@ static void __Pyx_RaiseBufferIndexError(int axis) {
   PyErr_Format(PyExc_IndexError,
      "Out of bounds on buffer access (axis %d)", axis);
 }
-
-/* PyFloatBinop */
-#if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyFloat_SubtractCObj(PyObject *op1, PyObject *op2, double floatval, int inplace, int zerodivision_check) {
-    const double a = floatval;
-    double b, result;
-    CYTHON_UNUSED_VAR(inplace);
-    CYTHON_UNUSED_VAR(zerodivision_check);
-    if (likely(PyFloat_CheckExact(op2))) {
-#if CYTHON_COMPILING_IN_LIMITED_API
-        b = __pyx_PyFloat_AsDouble(op2);
-#else
-        b = PyFloat_AS_DOUBLE(op2);
-#endif
-        
-    } else
-    #if PY_MAJOR_VERSION < 3
-    if (likely(PyInt_CheckExact(op2))) {
-        b = (double) PyInt_AS_LONG(op2);
-        
-    } else
-    #endif
-    if (likely(PyLong_CheckExact(op2))) {
-        #if CYTHON_USE_PYLONG_INTERNALS
-        if (__Pyx_PyLong_IsZero(op2)) {
-            b = 0.0;
-            
-        } else if (__Pyx_PyLong_IsCompact(op2)) {
-            b = (double) __Pyx_PyLong_CompactValue(op2);
-        } else {
-            const digit* digits = __Pyx_PyLong_Digits(op2);
-            const Py_ssize_t size = __Pyx_PyLong_SignedDigitCount(op2);
-            switch (size) {
-                case -2:
-                case 2:
-                    if (8 * sizeof(unsigned long) > 2 * PyLong_SHIFT && ((8 * sizeof(unsigned long) < 53) || (1 * PyLong_SHIFT < 53))) {
-                        b = (double) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        if ((8 * sizeof(unsigned long) < 53) || (2 * PyLong_SHIFT < 53) || (b < (double) ((PY_LONG_LONG)1 << 53))) {
-                            if (size == -2)
-                                b = -b;
-                            break;
-                        }
-                    }
-                    CYTHON_FALLTHROUGH;
-                case -3:
-                case 3:
-                    if (8 * sizeof(unsigned long) > 3 * PyLong_SHIFT && ((8 * sizeof(unsigned long) < 53) || (2 * PyLong_SHIFT < 53))) {
-                        b = (double) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        if ((8 * sizeof(unsigned long) < 53) || (3 * PyLong_SHIFT < 53) || (b < (double) ((PY_LONG_LONG)1 << 53))) {
-                            if (size == -3)
-                                b = -b;
-                            break;
-                        }
-                    }
-                    CYTHON_FALLTHROUGH;
-                case -4:
-                case 4:
-                    if (8 * sizeof(unsigned long) > 4 * PyLong_SHIFT && ((8 * sizeof(unsigned long) < 53) || (3 * PyLong_SHIFT < 53))) {
-                        b = (double) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        if ((8 * sizeof(unsigned long) < 53) || (4 * PyLong_SHIFT < 53) || (b < (double) ((PY_LONG_LONG)1 << 53))) {
-                            if (size == -4)
-                                b = -b;
-                            break;
-                        }
-                    }
-                    CYTHON_FALLTHROUGH;
-                default:
-        #endif
-                    b = PyLong_AsDouble(op2);
-                    if (unlikely(b == -1.0 && PyErr_Occurred())) return NULL;
-        #if CYTHON_USE_PYLONG_INTERNALS
-            }
-        }
-        #endif
-    } else {
-        return (inplace ? PyNumber_InPlaceSubtract : PyNumber_Subtract)(op1, op2);
-    }
-        PyFPE_START_PROTECT("subtract", return NULL)
-        result = a - b;
-        PyFPE_END_PROTECT(result)
-        return PyFloat_FromDouble(result);
-}
-#endif
 
 /* PyObject_GenericGetAttrNoDict */
 #if CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP && PY_VERSION_HEX < 0x03070000

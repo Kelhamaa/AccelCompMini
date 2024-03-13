@@ -5,6 +5,7 @@ cimport numpy as np
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from libc.math cimport sin,cos,exp
 
 #=======================================================================
 def initdat(int nmax):
@@ -134,13 +135,13 @@ def one_energy(double[:, ::1] arr, int ix, int iy, int nmax):
 # to the energy
 #
     ang = arr[ix,iy]-arr[ixp,iy]
-    en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+    en += 0.5*(1.0 - 3.0*cos(ang)**2)
     ang = arr[ix,iy]-arr[ixm,iy]
-    en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+    en += 0.5*(1.0 - 3.0*cos(ang)**2)
     ang = arr[ix,iy]-arr[ix,iyp]
-    en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+    en += 0.5*(1.0 - 3.0*cos(ang)**2)
     ang = arr[ix,iy]-arr[ix,iym]
-    en += 0.5*(1.0 - 3.0*np.cos(ang)**2)
+    en += 0.5*(1.0 - 3.0*cos(ang)**2)
     return en
 #=======================================================================
 def all_energy(double[:, ::1] arr, int nmax):
@@ -177,7 +178,7 @@ def get_order(double[:, ::1] arr, int nmax):
     cdef Qab
     cdef eigenvalues
     cdef int a, b, i, j
-    lab = np.vstack((cmath.cos(arr),cmath.sin(arr),np.zeros_like(arr))).reshape(3,nmax,nmax)
+    lab = np.vstack((np.cos(arr),np.sin(arr),np.zeros_like(arr))).reshape(3,nmax,nmax)
     Qab = np.einsum('aij,bij->ab', lab, lab) - np.eye(3)
     Qab /= (2*nmax*nmax)
     eigenvalues = np.linalg.eigvals(Qab)
@@ -216,7 +217,7 @@ def MC_step(double[:, ::1] arr, float Ts, int nmax):
             en0 = one_energy(arr, ix, iy, nmax)
             arr[ix, iy] += ang
             en1 = one_energy(arr, ix, iy, nmax)
-            if en1 <= en0 or np.exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):
+            if en1 <= en0 or exp(-(en1 - en0) / Ts) >= np.random.uniform(0.0, 1.0):
                 accept += 1
             else:
                 arr[ix, iy] -= ang
